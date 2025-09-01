@@ -23,7 +23,7 @@ class WebSocketDemo extends StatefulWidget {
 
 class _WebSocketDemoState extends State<WebSocketDemo> {
   final channel = WebSocketChannel.connect(
-    Uri.parse('ws://192.168.1.78:8000/ws/1'),  // ID client = 1
+    Uri.parse('ws://192.168.1.76:8000/ws/1'),  // ID client = 1
   );
 
   
@@ -33,12 +33,24 @@ class _WebSocketDemoState extends State<WebSocketDemo> {
   @override
   void initState() {
     super.initState();
+
+
+  
+    print("Tentative de connexion WebSocket...");
+    
+    channel.sink.done.then((_) {
+      print("WebSocket fermé");
+    }).catchError((error) {
+      print("Erreur WebSocket: $error");
+    });
+
+
     channel.stream.listen((message) {
         print("Message reçu: $message");  // Log brut
         final data = jsonDecode(message);
-        print("The data received $data");
+        print("The data received $data and ${data['data']}");
         setState(() {
-          messages.add(data['message']);
+          messages.add(data['data']['message']);
         });
       },
       onError: (error) => print("Erreur: $error"),
